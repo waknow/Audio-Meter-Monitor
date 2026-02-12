@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="index.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         body {
             background-color: #0f172a;
@@ -43,20 +44,21 @@
     </style>
 
     <script type="importmap">
-    {
-      "imports": {
-        "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-        "react/": "https://esm.sh/react@^19.2.4/",
-        "react": "https://esm.sh/react@^19.2.4",
-        "recharts": "https://esm.sh/recharts@^3.7.0"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "htm": "https://esm.sh/htm@3.1.1",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0?external=react",
+    "recharts": "https://esm.sh/recharts@3.7.0?external=react",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
 </head>
 <body>
     <div id="root"></div>
-    <!-- 通过 module 方式直接加载 index.tsx，由构建工具或环境转译器处理 -->
-    <script type="module" src="index.tsx"></script>
+    <script type="module" src="index.js"></script>
 </body>
 </html>
