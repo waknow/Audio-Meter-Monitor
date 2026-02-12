@@ -1,6 +1,6 @@
 {
   "name": "Audio Meter Monitor 3",
-  "description": "Real-time acoustic analysis for mechanical gas meters. Monitors 'click' sounds using spectral fingerprinting to track gas consumption with Home Assistant integration.",
+  "description": "Real-time acoustic analysis for mechanical gas meters. Monitors 'click' sounds using spectral fingerprinting to track gas consumption with Home Assistant integration.\n\nmfcc 计算的是和样例声音的距离，距离越小越相似，实时计算出来的相似度，小于阈值就命中\n\n支持上传元样本，支持配置阈值和命中间隔",
   "requestFramePermissions": [
     "microphone"
   ]
