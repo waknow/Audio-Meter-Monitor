@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AudioPulse AI - 声音分析统计</title>
+    <title>AudioPulse AI - 声音统计器</title>
     
-    <!-- PWA 配置 -->
+    <!-- 安卓与 iOS PWA 支持 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- 直接引用当前目录下的资源，不使用 ./ 避免某些环境下的解析歧义 -->
     <link rel="manifest" href="public/manifest.json">
     <link rel="stylesheet" href="index.css">
     
@@ -20,12 +19,13 @@
         body {
             background-color: #0f172a;
             color: #f8fafc;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
             overscroll-behavior-y: contain;
-            padding-bottom: env(safe-area-inset-bottom);
         }
+        /* 针对移动端触摸优化 */
         * { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 
     <script type="importmap">
@@ -43,19 +43,14 @@
 <body>
     <div id="root"></div>
     
-    <!-- 主程序入口 -->
+    <!-- 直接加载，由预览环境处理 transpilation -->
     <script type="module" src="index.tsx"></script>
     
     <script>
-        // 仅在顶层窗口注册 Service Worker，避免预览环境报错
+        // 健壮的 Service Worker 注册
         if ('serviceWorker' in navigator && window.self === window.top && window.isSecureContext) {
-            window.addEventListener('load', function() {
-                // 使用简单路径，延迟注册以确保主线程加载完毕
-                setTimeout(function() {
-                    navigator.serviceWorker.register('sw.js')
-                        .then(function(reg) { console.log('PWA 已就绪'); })
-                        .catch(function(err) { console.warn('SW 注册受限:', err.message); });
-                }, 3000);
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(console.warn);
             });
         }
     </script>
