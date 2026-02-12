@@ -5,13 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Audio Pulse - 声音匹配统计器</title>
     
+    <script>
+        /**
+         * 1. 立即执行路径修复逻辑
+         * GitHub Pages 在没有末尾斜杠时，会把 "index.css" 解析到域名根目录。
+         * 例如: 从 waknow.github.io/Audio-Meter-Monitor 寻找 /index.css (404)
+         * 重定向后: 从 waknow.github.io/Audio-Meter-Monitor/ 寻找 ./index.css (200)
+         */
+        (function() {
+            var loc = window.location;
+            var path = loc.pathname;
+            if (!path.endsWith('/')) {
+                var segments = path.split('/');
+                var lastSegment = segments[segments.length - 1];
+                // 如果最后一段不包含点（不是具体文件），则视为目录并补全斜杠
+                if (lastSegment && !lastSegment.includes('.')) {
+                    window.location.replace(loc.origin + path + '/' + loc.search + loc.hash);
+                }
+            }
+        })();
+    </script>
+
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- 使用简单的相对路径，不带 ./ 也不带 / -->
-    <link rel="manifest" href="public/manifest.json">
-    <link rel="stylesheet" href="index.css">
+    <!-- 使用 ./ 明确标识当前目录下的相对路径，避免去根目录查找 -->
+    <link rel="manifest" href="./public/manifest.json">
+    <link rel="stylesheet" href="./index.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -40,33 +62,27 @@
 <body>
     <div id="root"></div>
     
-    <!-- 模块脚本引用 -->
-    <script type="module" src="index.tsx"></script>
+    <!-- 引用主入口脚本，同样使用 ./ -->
+    <script type="module" src="./index.tsx"></script>
     
     <script>
         /**
-         * 终极健壮的 Service Worker 注册逻辑
+         * 健壮的 Service Worker 注册
+         * 排除 iframe 环境，并使用 ./sw.js 确保在子目录下运行
          */
         if ('serviceWorker' in navigator && window.isSecureContext) {
             window.addEventListener('load', function() {
-                // 如果在 iframe 中运行，很多预览环境会限制 SW
-                if (window.self !== window.top) {
-                    console.warn('检测到在 iframe 中运行，跳过 SW 注册以避免跨域错误。');
-                    return;
+                if (window.self === window.top) {
+                    setTimeout(function() {
+                        navigator.serviceWorker.register('./sw.js')
+                            .then(function(reg) {
+                                console.log('SW 注册成功，作用域:', reg.scope);
+                            })
+                            .catch(function(err) {
+                                console.warn('SW 注册失败 (可能是环境限制):', err.message);
+                            });
+                    }, 2000);
                 }
-
-                // 较长的延迟确保文档完全 Ready
-                setTimeout(function() {
-                    // 使用最简单的名称，浏览器会自动相对于当前 index.html 所在的目录解析
-                    navigator.serviceWorker.register('sw.js')
-                        .then(function(reg) {
-                            console.log('SW 注册成功，作用域:', reg.scope);
-                        })
-                        .catch(function(err) {
-                            // 仅记录警告，不中断主程序
-                            console.warn('SW 注册失败 (预览环境常见):', err.message);
-                        });
-                }, 3000);
             });
         }
     </script>

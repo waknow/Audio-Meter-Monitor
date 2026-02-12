@@ -1,7 +1,6 @@
-
 {
-  "short_name": "GasPulse",
-  "name": "GasPulse AI - Meter Monitor",
+  "short_name": "AudioPulse",
+  "name": "AudioPulse AI - 声音分析统计",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/5915/5915820.png",
@@ -10,7 +9,7 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "./",
+  "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
