@@ -1,0 +1,7 @@
+{
+  "name": "Audio Meter Monitor 3",
+  "description": "Real-time acoustic analysis for mechanical gas meters. Monitors 'click' sounds using spectral fingerprinting to track gas consumption with Home Assistant integration.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
