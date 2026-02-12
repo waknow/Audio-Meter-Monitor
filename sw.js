@@ -1,22 +1,21 @@
 
-const CACHE_NAME = 'gaspulse-v3';
+const CACHE_NAME = 'gaspulse-v10';
 const ASSETS = [
   './',
-  './index.html',
-  './index.css',
-  './index.tsx',
-  './App.tsx',
-  './types.ts',
-  './services/audioEngine.ts',
-  './services/haService.ts',
-  './components/Visualizer.tsx',
-  './public/manifest.json'
+  'index.html',
+  'index.css',
+  'index.tsx',
+  'App.tsx',
+  'types.ts',
+  'services/audioEngine.ts',
+  'services/haService.ts',
+  'components/Visualizer.tsx',
+  'public/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Use Settled to ensure failure of one optional asset doesn't break installation
       return Promise.allSettled(
         ASSETS.map(url => cache.add(url).catch(err => console.warn(`Failed to cache ${url}:`, err)))
       );

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GasPulse AI - Meter Monitor</title>
     
-    <!-- Fix: Ensure trailing slash for correct relative path resolution on GitHub Pages -->
     <script>
+      /**
+       * Subdirectory & Environment Robustness
+       * Ensures that the <base> tag is set using a relative path to avoid 
+       * absolute URL construction issues in preview environments.
+       */
       (function() {
         var path = window.location.pathname;
-        // Redirect to ensure trailing slash if it's not a file request
-        if (!path.endsWith('/') && path.split('/').pop().indexOf('.') === -1) {
-          window.location.replace(window.location.href + '/');
+        var repoName = 'Audio-Meter-Monitor';
+        
+        // Handle missing trailing slash on repo name
+        if (path.endsWith('/' + repoName)) {
+          window.location.replace(window.location.origin + path + '/');
+          return;
         }
+
+        var base = document.createElement('base');
+        // Calculate the relative directory path from the root
+        // For /repo/index.html, baseDir is /repo/
+        var baseDir = path.substring(0, path.lastIndexOf('/') + 1);
+        
+        // Use relative path for base href to avoid doubling origins or protocols
+        base.href = baseDir;
+        document.head.appendChild(base);
+        
+        console.log('App Base Directory established:', base.href);
       })();
     </script>
 
@@ -21,9 +38,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- Use explicit relative paths with ./ prefix -->
-    <link rel="manifest" href="./public/manifest.json">
-    <link rel="stylesheet" href="./index.css">
+    <!-- Assets are relative to the <base> tag -->
+    <link rel="manifest" href="public/manifest.json">
+    <link rel="stylesheet" href="index.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -52,15 +70,38 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- Explicitly use ./ to force relative resolution within the subdirectory -->
-    <script type="module" src="./index.tsx"></script>
+    
+    <script type="module" src="index.tsx"></script>
+    
     <script>
-        if ('serviceWorker' in navigator) {
+        /**
+         * Robust Service Worker Registration
+         * 1. Uses a strictly relative path './sw.js' to ensure the browser 
+         *    resolves it correctly based on the document location.
+         * 2. Incorporates a delay for stability in sandboxed environments.
+         * 3. Uses simple string paths to avoid URL object-related origin mangling.
+         */
+        if ('serviceWorker' in navigator && window.isSecureContext) {
             window.addEventListener('load', () => {
-                // Register service worker with explicit relative path
-                navigator.serviceWorker.register('./sw.js', { scope: './' })
-                    .then(reg => console.log('SW registered for scope:', reg.scope))
-                    .catch(err => console.error('SW registration failed:', err));
+                setTimeout(() => {
+                    try {
+                        // Using './sw.js' is the safest way to ensure registration 
+                        // occurs in the current directory scope without protocol errors.
+                        navigator.serviceWorker.register('./sw.js')
+                            .then(reg => {
+                                console.log('Service Worker registered successfully. Scope:', reg.scope);
+                            })
+                            .catch(err => {
+                                if (err.name === 'InvalidStateError') {
+                                    console.warn('SW registration skipped: Invalid document state.');
+                                } else {
+                                    console.error('Service Worker registration failed:', err.message);
+                                }
+                            });
+                    } catch (e) {
+                        console.error('Service Worker initialization error:', e);
+                    }
+                }, 1500); 
             });
         }
     </script>
