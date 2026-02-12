@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AudioPulse AI - 声音统计器</title>
+    <title>AudioPulse AI - 声音实时统计</title>
     
-    <!-- 安卓与 iOS PWA 支持 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,13 +18,19 @@
         body {
             background-color: #0f172a;
             color: #f8fafc;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
             overscroll-behavior-y: contain;
         }
-        /* 针对移动端触摸优化 */
         * { -webkit-tap-highlight-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 
     <script type="importmap">
@@ -42,17 +47,6 @@
 </head>
 <body>
     <div id="root"></div>
-    
-    <!-- 直接加载，由预览环境处理 transpilation -->
     <script type="module" src="index.tsx"></script>
-    
-    <script>
-        // 健壮的 Service Worker 注册
-        if ('serviceWorker' in navigator && window.self === window.top && window.isSecureContext) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(console.warn);
-            });
-        }
-    </script>
 </body>
 </html>
