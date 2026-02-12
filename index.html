@@ -5,11 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GasPulse AI - Meter Monitor</title>
+    
+    <!-- Fix: Ensure trailing slash for correct relative path resolution on GitHub Pages -->
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        // Redirect to ensure trailing slash if it's not a file request
+        if (!path.endsWith('/') && path.split('/').pop().indexOf('.') === -1) {
+          window.location.replace(window.location.href + '/');
+        }
+      })();
+    </script>
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
-    <!-- Use relative path for manifest to support subfolders -->
-    <link rel="manifest" href="public/manifest.json">
+    
+    <!-- Use explicit relative paths with ./ prefix -->
+    <link rel="manifest" href="./public/manifest.json">
+    <link rel="stylesheet" href="./index.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -39,13 +53,13 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- Explicitly import the entry point for static hosting compatibility -->
-    <script type="module" src="index.tsx"></script>
+    <!-- Explicitly use ./ to force relative resolution within the subdirectory -->
+    <script type="module" src="./index.tsx"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Register service worker using a relative path that works in subdirectories
-                navigator.serviceWorker.register('./sw.js')
+                // Register service worker with explicit relative path
+                navigator.serviceWorker.register('./sw.js', { scope: './' })
                     .then(reg => console.log('SW registered for scope:', reg.scope))
                     .catch(err => console.error('SW registration failed:', err));
             });

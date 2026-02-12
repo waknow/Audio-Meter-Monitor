@@ -1,0 +1,11 @@
+
+/* Base styles to prevent 404 on standard web requests */
+:root {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
