@@ -7,30 +7,25 @@
     
     <script>
       /**
-       * Subdirectory & Environment Robustness
-       * Ensures that the <base> tag is set using a relative path to avoid 
-       * absolute URL construction issues in preview environments.
+       * 路径健壮性处理
+       * 1. 确保目录访问以 / 结尾，否则相对路径会解析到上一级。
+       * 2. 使用简单的相对 base 路径。
        */
       (function() {
-        var path = window.location.pathname;
-        var repoName = 'Audio-Meter-Monitor';
+        var loc = window.location;
+        var path = loc.pathname;
         
-        // Handle missing trailing slash on repo name
-        if (path.endsWith('/' + repoName)) {
-          window.location.replace(window.location.origin + path + '/');
+        // 如果路径不是以文件结尾（没点）且没有以 / 结尾，则补全斜杠
+        var lastSegment = path.split('/').pop();
+        if (lastSegment && !lastSegment.includes('.') && !path.endsWith('/')) {
+          window.location.replace(loc.origin + path + '/' + loc.search + loc.hash);
           return;
         }
 
+        // 设置 base 标签，让所有资源都相对于当前目录
         var base = document.createElement('base');
-        // Calculate the relative directory path from the root
-        // For /repo/index.html, baseDir is /repo/
-        var baseDir = path.substring(0, path.lastIndexOf('/') + 1);
-        
-        // Use relative path for base href to avoid doubling origins or protocols
-        base.href = baseDir;
+        base.href = './'; 
         document.head.appendChild(base);
-        
-        console.log('App Base Directory established:', base.href);
       })();
     </script>
 
@@ -38,7 +33,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- Assets are relative to the <base> tag -->
+    <!-- 所有路径现在都相对于当前目录 -->
     <link rel="manifest" href="public/manifest.json">
     <link rel="stylesheet" href="index.css">
     
@@ -71,37 +66,27 @@
 <body>
     <div id="root"></div>
     
-    <script type="module" src="index.tsx"></script>
+    <!-- 显式使用相对路径引用模块 -->
+    <script type="module" src="./index.tsx"></script>
     
     <script>
         /**
-         * Robust Service Worker Registration
-         * 1. Uses a strictly relative path './sw.js' to ensure the browser 
-         *    resolves it correctly based on the document location.
-         * 2. Incorporates a delay for stability in sandboxed environments.
-         * 3. Uses simple string paths to avoid URL object-related origin mangling.
+         * 简易 Service Worker 注册
+         * 直接使用 './sw.js'，浏览器会自动根据当前页面位置解析。
+         * 避免使用任何手动 origin 拼接逻辑。
          */
         if ('serviceWorker' in navigator && window.isSecureContext) {
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    try {
-                        // Using './sw.js' is the safest way to ensure registration 
-                        // occurs in the current directory scope without protocol errors.
-                        navigator.serviceWorker.register('./sw.js')
-                            .then(reg => {
-                                console.log('Service Worker registered successfully. Scope:', reg.scope);
-                            })
-                            .catch(err => {
-                                if (err.name === 'InvalidStateError') {
-                                    console.warn('SW registration skipped: Invalid document state.');
-                                } else {
-                                    console.error('Service Worker registration failed:', err.message);
-                                }
-                            });
-                    } catch (e) {
-                        console.error('Service Worker initialization error:', e);
-                    }
-                }, 1500); 
+            window.addEventListener('load', function() {
+                // 延迟注册以提高稳定性
+                setTimeout(function() {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(function(reg) {
+                            console.log('SW 注册成功。作用域:', reg.scope);
+                        })
+                        .catch(function(err) {
+                            console.warn('SW 注册被跳过或失败（不影响基础功能）:', err.message);
+                        });
+                }, 1000);
             });
         }
     </script>
