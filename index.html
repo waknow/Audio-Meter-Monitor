@@ -3,37 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Audio Pulse - 声音匹配统计器</title>
+    <title>AudioPulse AI - 声音分析统计</title>
     
-    <script>
-        /**
-         * 1. 立即执行路径修复逻辑
-         * GitHub Pages 在没有末尾斜杠时，会把 "index.css" 解析到域名根目录。
-         * 例如: 从 waknow.github.io/Audio-Meter-Monitor 寻找 /index.css (404)
-         * 重定向后: 从 waknow.github.io/Audio-Meter-Monitor/ 寻找 ./index.css (200)
-         */
-        (function() {
-            var loc = window.location;
-            var path = loc.pathname;
-            if (!path.endsWith('/')) {
-                var segments = path.split('/');
-                var lastSegment = segments[segments.length - 1];
-                // 如果最后一段不包含点（不是具体文件），则视为目录并补全斜杠
-                if (lastSegment && !lastSegment.includes('.')) {
-                    window.location.replace(loc.origin + path + '/' + loc.search + loc.hash);
-                }
-            }
-        })();
-    </script>
-
+    <!-- PWA 配置 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- 使用 ./ 明确标识当前目录下的相对路径，避免去根目录查找 -->
-    <link rel="manifest" href="./public/manifest.json">
-    <link rel="stylesheet" href="./index.css">
+    <!-- 直接引用当前目录下的资源，不使用 ./ 避免某些环境下的解析歧义 -->
+    <link rel="manifest" href="public/manifest.json">
+    <link rel="stylesheet" href="index.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -47,42 +27,35 @@
         }
         * { -webkit-tap-highlight-color: transparent; }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "recharts": "https://esm.sh/recharts@^3.7.0"
-  }
-}
-</script>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react": "https://esm.sh/react@^19.2.4",
+        "recharts": "https://esm.sh/recharts@^3.7.0"
+      }
+    }
+    </script>
 </head>
 <body>
     <div id="root"></div>
     
-    <!-- 引用主入口脚本，同样使用 ./ -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- 主程序入口 -->
+    <script type="module" src="index.tsx"></script>
     
     <script>
-        /**
-         * 健壮的 Service Worker 注册
-         * 排除 iframe 环境，并使用 ./sw.js 确保在子目录下运行
-         */
-        if ('serviceWorker' in navigator && window.isSecureContext) {
+        // 仅在顶层窗口注册 Service Worker，避免预览环境报错
+        if ('serviceWorker' in navigator && window.self === window.top && window.isSecureContext) {
             window.addEventListener('load', function() {
-                if (window.self === window.top) {
-                    setTimeout(function() {
-                        navigator.serviceWorker.register('./sw.js')
-                            .then(function(reg) {
-                                console.log('SW 注册成功，作用域:', reg.scope);
-                            })
-                            .catch(function(err) {
-                                console.warn('SW 注册失败 (可能是环境限制):', err.message);
-                            });
-                    }, 2000);
-                }
+                // 使用简单路径，延迟注册以确保主线程加载完毕
+                setTimeout(function() {
+                    navigator.serviceWorker.register('sw.js')
+                        .then(function(reg) { console.log('PWA 已就绪'); })
+                        .catch(function(err) { console.warn('SW 注册受限:', err.message); });
+                }, 3000);
             });
         }
     </script>
