@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f172a">
+    <!-- Use relative path for manifest to support subfolders -->
     <link rel="manifest" href="public/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -38,10 +39,15 @@
 </head>
 <body>
     <div id="root"></div>
+    <!-- Explicitly import the entry point for static hosting compatibility -->
+    <script type="module" src="index.tsx"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW reg error:', err));
+                // Register service worker using a relative path that works in subdirectories
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW registered for scope:', reg.scope))
+                    .catch(err => console.error('SW registration failed:', err));
             });
         }
     </script>
