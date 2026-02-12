@@ -1,6 +1,6 @@
 {
-  "short_name": "AudioPulse",
-  "name": "AudioPulse AI - 声音分析统计",
+  "short_name": "声音统计器",
+  "name": "AudioPulse AI - 实时声音统计器",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/5915/5915820.png",
@@ -13,5 +13,6 @@
   "display": "standalone",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "description": "基于 AI 频谱指纹的实时声音计数与统计工具。"
 }

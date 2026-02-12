@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>声音脉冲 AI - 实时统计器</title>
+    <title>AudioPulse AI - 声音实时统计</title>
     
-    <!-- 安卓 PWA 支持 -->
+    <!-- 安卓 PWA 与移动端优化 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,7 +20,7 @@
             background-color: #0f172a;
             color: #f8fafc;
             font-family: system-ui, -apple-system, sans-serif;
-            overflow: hidden; /* 防止移动端弹性滚动干扰 */
+            overflow: hidden; 
             overscroll-behavior: none;
         }
         * { -webkit-tap-highlight-color: transparent; }
@@ -28,18 +28,17 @@
         
         .glass-card {
             background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        @keyframes hit-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px 10px rgba(59, 130, 246, 0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
-        .match-pulse {
-            animation: pulse-glow 0.8s ease-out;
+        .animate-hit {
+            animation: hit-pulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
     </style>
 
@@ -57,7 +56,7 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- 注意：为了解决 GitHub Pages 的 MIME 类型问题，建议确保 index.tsx 被平台正常转译 -->
+    <!-- 通过 module 方式直接加载 index.tsx，由构建工具或环境转译器处理 -->
     <script type="module" src="index.tsx"></script>
 </body>
 </html>
